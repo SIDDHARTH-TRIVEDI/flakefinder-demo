@@ -1,29 +1,34 @@
+import os
 import random
 import subprocess
 import sys
 
 
-TEST_A = "tests/test_a_order.py"
-TEST_B = "tests/test_b_race.py"
+TEST_TARGET = "tests/test_a_order.py"
+TEST_MUTATOR = "tests/test_shared_cache_mutator.py"
 
 TOTAL_RUNS = 20
 
 passes = 0
 failures = 0
 
+seed_env = os.getenv("FLAKE_DEMO_SEED")
+rng = random.Random(int(seed_env)) if seed_env is not None else random
 
 print("FlakeFinder - Test Order Experiment")
 print("=" * 45)
+if seed_env is not None:
+    print(f"FLAKE_DEMO_SEED: {seed_env}")
 
 for run in range(1, TOTAL_RUNS + 1):
 
     # Randomly choose which test runs first
-    if random.choice([True, False]):
-        order = [TEST_A, TEST_B]
+    if rng.choice([True, False]):
+        order = [TEST_TARGET, TEST_MUTATOR]
     else:
-        order = [TEST_B, TEST_A]
+        order = [TEST_MUTATOR, TEST_TARGET]
 
-    print(f"\nRun {run}/20")
+    print(f"\nRun {run}/{TOTAL_RUNS}")
     print(f"Order: {' -> '.join(order)}")
 
     result = subprocess.run(
