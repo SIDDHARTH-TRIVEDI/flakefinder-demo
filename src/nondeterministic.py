@@ -3,16 +3,14 @@ import random
 
 
 def get_system_value():
-    # Real bug: production logic depends on unseeded randomness.
-    value = random.randint(1, 10)
-
-    # Demo mode can make the behavior reproducible later.
     seed = os.getenv("FLAKE_DEMO_SEED")
-    if seed is not None:
-        random.seed(int(seed))
-        value = random.randint(1, 10)
 
-    return value
+    if seed is not None:
+        rng = random.Random(int(seed))
+        return rng.randint(1, 10)
+
+    # Real nondeterministic behavior.
+    return random.randint(1, 10)
 
 
 def is_valid_value():
