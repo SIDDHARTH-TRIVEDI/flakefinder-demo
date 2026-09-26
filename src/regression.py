@@ -1,3 +1,4 @@
+import os
 import random
 
 
@@ -6,7 +7,13 @@ def calculate_total(items):
 
     # REGRESSION:
     # Random behavior was accidentally introduced here.
-    if random.random() < 0.5:
-        total += 1
+    seed = os.getenv("FLAKE_DEMO_SEED")
+    if seed is not None:
+        rng = random.Random(int(seed))
+        if rng.random() < 0.5:
+            total += 1
+    else:
+        if random.random() < 0.5:
+            total += 1
 
-    return total
+    return total

@@ -3,14 +3,21 @@ import os
 import random
 
 
+_demo_rng = None
+
+
 def get_demo_delay():
+    global _demo_rng
     seed = os.getenv("FLAKE_DEMO_SEED")
 
     if seed is not None:
-        rng = random.Random(int(seed))
-        return rng.uniform(0.0, 0.02)
+        if _demo_rng is None:
+            _demo_rng = random.Random(int(seed))
+        return _demo_rng.uniform(0.0, 0.02)
 
+    _demo_rng = None
     return random.uniform(0.0, 0.02)
+
 
 
 async def background_update(result):
